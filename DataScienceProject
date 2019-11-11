@@ -1,0 +1,73 @@
+
+import numpy as np
+import sklearn as sk
+import pandas as pd
+
+# via https://towardsdatascience.com/logistic-regression-a-simplified-approach-using-python-c4bc81a87c31
+# We are importing the following libraries
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+#%matplotlib inline
+
+
+
+# Line 16 just a way to view the columns in terminal to visualize...
+pd.set_option('display.max_columns', 15)
+
+
+# Read data from file 'filename.csv'
+# (in the same directory that your python process is based)
+# Control delimiters, rows, column names with read_csv (see later)
+data = pd.read_csv("african_crises.csv")
+print(data.head())
+#data1 = pd.read_csv("C:\Users\Austen\PycharmProjects\DataScienceProject\data.csv")
+
+# print(data.isnull())  # Helps us see which data points are empty
+
+#After looking at the data we can see that Region 2 is not an effective category
+# As the majority of values appear to be null
+# https://stackoverflow.com/questions/26597116/seaborn-plots-not-showing-up
+
+sns.heatmap(data.isnull())
+plt.show()
+
+# Looking at the heatmap chart created, we can see that designation, region_2,
+# taster name, and taster twitter handle are probably not useful datapoints to
+# continue the analysis
+
+# Removing taster_twitter_handle, region_2
+data.drop('taster_twitter_handle', axis=1, inplace=True)
+data.drop('region_2', axis=1, inplace=True)
+
+# Data Check:
+sns.heatmap(data.isnull())
+plt.show()
+
+# However, perhaps there is some value in continuing to look at the taster name,
+# to uncover any possible biases. Let's fill in the null values with a text string - 'unknown'
+
+def impute_taster(cols):
+    taster_name = cols[0]
+    if pd.isnull(taster_name):
+        return "Unknown"
+    else:
+        return taster_name
+
+
+data['taster_name'] = data[['taster_name']].apply(impute_taster(), axis=1)
+
+
+sns.heatmap(data.isnull())
+plt.show()
+
+# Preview the first 5 lines of the loaded data
+#print(data.head(1))
+
+#df_csv = pd.read_csv("african_crises.csv", index=False)
+
+# Load only 3 rows
+#df_csv = pd.read_csv('african_crises.csv', nrows=3)
+
+#print(df_csv)
+
